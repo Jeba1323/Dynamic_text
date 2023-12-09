@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-image: url("https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2020/07/shutterstock_582803470.jpg?w=750");
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0; /* Background color */
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: 100% 100%;
+        }
+
+        #header {
+            display: flex;
+            justify-content: flex-start;
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        #header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        #boxes-container {
+            display: flex;
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        #text-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background-color: papayawhip;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            align-items: center; /* Center the content horizontally */
+        }
+
+        #text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .draggable {
+            white-space: nowrap;
+            padding: 5px;
+            background-color: lightpink;
+            border-color: black;
+            z-index: 1;
+            cursor: grab; /* Add cursor: grab style for draggable effect */
+            user-select: none;
+            position: absolute;
+        }
+
+        #input-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align content to the left */
+            padding: 20px;
+            background-color: papayawhip;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        #input-text {
+            margin-bottom: 10px;
+            width: 80%; /* Reduced width */
+            box-sizing: border-box;
+        }
+
+        #options {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            align-items: flex-start; /* Align options to the left */
+        }
+
+        #fontFamily, #fontColor {
+            margin-bottom: 35px;
+        }
+        #fontFamily{
+            width: 150px;
+            height: 30px;
+        }
+        #fontColor{
+            margin-left: 45px;
+            margin-bottom: 10px;
+
+        }
+
+        #fontSizeContainer {
+            margin-bottom: 180px;
+            display: flex;
+            align-items: center;
+        }
+
+        #fontSize {
+            width: 50px; /* Adjusted width for readonly input */
+            margin-right: 10px;
+            text-align: center;
+            
+        }
+        #add-text-button{
+            background-color: skyblue;
+            font-weight: 100;
+            border-radius: 25px;
+            width: 150px;
+            height: 30px;
+        }
+        #changeFontSize {
+            padding: 8px;
+            cursor: pointer;
+            color: black;
+            border: none;
+        
+        }
+
+        #changeFontSize:hover {
+            background-color: antiquewhite;
+        }
+
+        #undo-button, #delete-all-button {
+            padding: 8px;
+            cursor: pointer;
+            color: black;
+            text-shadow: #fff;
+            border: none;
+            margin-bottom: 10px;
+        }
+        #undo-button{
+            background-color: orange;
+        }
+        #delete-all-button{
+            background-color: lightcoral;
+        }
+        #delete-all-button:hover {
+            background-color: #d32f2f;
+        }
+        #undo-button:hover{
+            background-color: darkgoldenrod;
+        }
+
+        #cursor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 2px;
+            background-color: black;
+            display: none;
+            z-index: 2;
+        }
+
+        #type-here-label {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 20px;
+            color: purple;
+            font-weight: 60px;
+        }
+        .fontColor1{
+            padding-left: 120px;
+        }
+        #textcolor{
+            color: purple;
+            font-weight: 60px;
+        }
+        .instruction{
+            color: purple;
+            font-weight: 60px;
+            background-color: antiquewhite;
+        }
+    </style>
+    <title>Dynamic Text</title>
+</head>
+<body>
+    <div id="header">
+        <div id="header-buttons">
+            <div id="delete-all-button" onclick="deleteAll()">DELETE ALL</div>
+            <div id="undo-button" onclick="undo()">Undo</div>
+        </div>
+    </div>
+
+    <div id="boxes-container">
+        <div id="text-box">
+            <label id="type-here-label" for="input-text">Enter new text and click add text for adding the text</label>
+            <input type="text" id="input-text" placeholder="NEW TEXT">
+            <div id="text-container"></div>
+            <div id="cursor"></div>
+        </div>
+
+        <div id="input-box">
+            <div id="options">
+                <label for="fontFamily" id="textcolor">Font</label>
+                <select id="fontFamily" onchange="updateFont()">
+                    <option value="Arial">Arial</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Courier New">Courier New</option>
+                    <!-- Add more font options as needed -->
+                </select>
+                <div>
+                    <label for="fontSizeContainer" id="textcolor">Size</label>
+                    <label for="fontColor" class="fontColor1" id="textcolor">Color</label>
+                </div>
+                <div id="fontSizeContainer">
+                    <input type="text" id="fontSize" readonly>
+                    <button id="changeFontSize" onclick="changeFontSize(1)">↑</button>
+                    <button id="changeFontSize" onclick="changeFontSize(-1)">↓</button>
+                    <input type="color" id="fontColor" onchange="updateColor()">
+                </div>
+
+            </div>
+            <button id="add-text-button" onclick="addText()">ADD TEXT</button>
+        </div>
+    </div>
+
+    <script>
+        const textContainer = document.getElementById('text-container');
+        const inputText = document.getElementById('input-text');
+        const fontSizeInput = document.getElementById('fontSize');
+        const fontFamilySelect = document.getElementById('fontFamily');
+        const fontColorInput = document.getElementById('fontColor');
+        const cursor = document.getElementById('cursor');
+        let currentTop = 0;
+        const addedTextElements = [];
+
+        let marginTop = 0;
+        function addText() {
+            const newText = document.createElement('div');
+            newText.classList.add('draggable');
+            newText.innerText = inputText.value;
+            newText.style.fontSize = fontSizeInput.value + 'px';
+            newText.style.fontFamily = fontFamilySelect.value;
+            newText.style.color = fontColorInput.value;
+            
+            // Set margin-top dynamically for each new text
+            newText.style.marginTop = marginTop + 'px';
+            
+            textContainer.appendChild(newText);
+            addedTextElements.push(newText);
+            
+            // Update marginTop for the next text
+            marginTop += 30; // Adjust this value as needed for the desired spacing
+            
+            // Reset input
+            inputText.value = '';
+
+            // Make the text draggable
+            makeDraggable(newText);
+        }
+        
+
+        function makeDraggable(element) {
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            element.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                cursor.style.display = 'block';
+                offsetX = e.clientX - element.getBoundingClientRect().left;
+                offsetY = e.clientY - element.getBoundingClientRect().top;
+
+                // Set cursor position initially
+                moveCursor(e.clientX, e.clientY);
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                cursor.style.display = 'none';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    moveCursor(e.clientX, e.clientY);
+                    element.style.left = e.clientX - offsetX + 'px';
+                    element.style.top = e.clientY - offsetY + 'px';
+                }
+            });
+        }
+
+        function moveCursor(x, y) {
+            cursor.style.left = x + 'px';
+            cursor.style.top = y + 'px';
+        }
+
+        function deleteAll() {
+            for (const element of addedTextElements) {
+                element.remove();
+            }
+            addedTextElements.length = 0;
+        }
+
+        function undo() {
+            const lastAddedText = addedTextElements.pop();
+            if (lastAddedText) {
+                lastAddedText.remove();
+            }
+        }
+
+        function removeText(element) {
+            element.remove();
+            const index = addedTextElements.indexOf(element);
+            if (index !== -1) {
+                addedTextElements.splice(index, 1);
+            }
+        }
+
+        function updateFont() {
+            const fontFamily = fontFamilySelect.value;
+            document.documentElement.style.setProperty('--font-family', fontFamily);
+        }
+
+        function updateColor() {
+            const fontColor = fontColorInput.value;
+            document.documentElement.style.setProperty('--font-color', fontColor);
+        }
+
+        function changeFontSize(delta) {
+            let currentSize = parseInt(fontSizeInput.value) || 16;
+            currentSize += delta;
+            if (currentSize > 0) {
+                fontSizeInput.value = currentSize;
+                updateSize();
+            }
+        }
+
+        function updateSize() {
+            const selectedSize = fontSizeInput.value + 'px';
+            document.documentElement.style.setProperty('--font-size', selectedSize);
+        }
+    </script>
+    <div class="instruction">
+        *You can drag the text and place it anywhere*
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
